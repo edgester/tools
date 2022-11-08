@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+# Run a command and replace the specified exit code with 0
+
+import argparse
+import subprocess
+
+# command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "--command", "-c", nargs="+", help="command to execute (put in quotes)"
+)
+parser.add_argument(
+    "--filter", "-f", nargs=1, type=int, help="exit code to ignore/filter"
+)
+parser.add_argument(
+    "--verbose", "-v", action="count", default=0, help="be more verbose"
+)
+args = parser.parse_args()
+
+filter_exit = list(args.filter)
+completed_process = subprocess.run(" ".join(args.command), shell=True)
+
+if args.verbose > 0:
+    print("return code=" + str(completed_process.returncode))
+
+if completed_process.returncode in filter_exit:
+    exit(0)
+else:
+    exit(completed_process.returncode)
